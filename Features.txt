@@ -1,0 +1,15 @@
+Title
+Hero
+Search
+Add input and BTN
+List cards
+Checkbox
+Input
+edit and delete BTN
+Alert for edit, add and delete
+modal for delete
+functions to not repeat card
+responsive
+app to install
+daily notification of list as reminder to do what makes u happy
+
