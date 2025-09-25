@@ -45,7 +45,8 @@
     <div class="container mx-auto px-4 flex justify-center">
       <div class="form-control w-full max-w-2xl relative">
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-        <input type="text" placeholder="Search your lists..." class="input input-bordered w-full pl-10" />
+        <input id="searchInput" type="text" placeholder="Search your lists..."
+          class="input input-bordered w-full pl-10" />
       </div>
     </div>
   </section>
@@ -71,13 +72,19 @@
 
     <!-- Bucket List Items -->
     <div class="card bg-white shadow-lg p-6 rounded-lg">
-      <h2 class="text-lg font-bold mb-4">My Bucket List</h2>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold">My Bucket List</h2>
+        <!-- Private Toggle -->
+        <label class="flex items-center gap-2 cursor-pointer">
+          <span class="text-sm">Show Hidden</span>
+          <input id="toggleHidden" type="checkbox" class="toggle toggle-primary" />
+        </label>
+      </div>
       <ul id="bucketList" class="space-y-4">
-
         <!-- List items will be dynamically added here -->
-
       </ul>
     </div>
+
   </main>
   <script src="script.js"></script>
 
