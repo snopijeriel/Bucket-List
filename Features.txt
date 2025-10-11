@@ -12,4 +12,6 @@ functions to not repeat card
 responsive
 app to install
 daily notification of list as reminder to do what makes u happy
+AI guide to how to achieve your bucket list
+privacy settings(prevent others from viewing your list, a buttom that blurs the list or specific ones  )
 

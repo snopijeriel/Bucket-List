@@ -58,19 +58,15 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }
 
-    // Add animation classes
     toast.style.transform = "translateX(100%)";
     toast.style.opacity = "0";
-    
     toastContainer.appendChild(toast);
 
-    // Animate in
     setTimeout(() => {
       toast.style.transform = "translateX(0)";
       toast.style.opacity = "1";
     }, 10);
 
-    // Auto remove after 4 seconds
     setTimeout(() => {
       toast.style.transform = "translateX(100%)";
       toast.style.opacity = "0";
@@ -100,11 +96,9 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    // Set span text safely
     const span = li.querySelector("span");
     span.textContent = item.text;
 
-    // Set initial visibility based on hidden flag + toggleHidden state
     const isHidden = !!item.hidden;
     if (isHidden && !toggleHidden?.checked) {
       li.style.display = "none";
@@ -112,35 +106,25 @@ document.addEventListener("DOMContentLoaded", () => {
       li.style.display = "flex";
     }
 
-    // Style hidden items when showing
     if (isHidden && toggleHidden?.checked) {
       span.classList.add("italic", "opacity-70");
     } else {
       span.classList.remove("italic", "opacity-70");
     }
 
-    // Set hide button icon depending on state
     const hideBtn = li.querySelector(".hideBtn");
     const hideIcon = hideBtn.querySelector("i");
-    if (isHidden) {
-      hideIcon.className = "fa-solid fa-eye-slash";
-    } else {
-      hideIcon.className = "fa-solid fa-eye";
-    }
+    hideIcon.className = isHidden ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
 
-    // Checkbox listener
     const checkbox = li.querySelector("input[type='checkbox']");
     checkbox.addEventListener("change", () => {
       bucketItems[index].completed = checkbox.checked;
       saveToLocalStorage();
-
       span.classList.toggle("line-through", checkbox.checked);
       span.classList.toggle("text-gray-500", checkbox.checked);
-      
       showAlert(checkbox.checked ? "Task completed!" : "Task unmarked", "success");
     });
 
-    // Hide/unhide listener
     hideBtn.addEventListener("click", () => {
       bucketItems[index].hidden = !bucketItems[index].hidden;
       saveToLocalStorage();
@@ -148,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
       showAlert(bucketItems[index].hidden ? "Task hidden" : "Task unhidden", "success");
     });
 
-    // Edit button (inline edit)
     const editBtn = li.querySelector(".editBtn");
     editBtn.addEventListener("click", () => {
       const input = document.createElement("input");
@@ -156,24 +139,18 @@ document.addEventListener("DOMContentLoaded", () => {
       input.value = item.text;
       input.className = "input input-bordered w-full";
 
-      // Replace span with input and focus
       span.replaceWith(input);
       input.focus();
-      input.select(); // Select all text for easier editing
+      input.select();
 
-      // Save on Enter or blur
       const finishEdit = () => finishEditing(input, index);
       input.addEventListener("keypress", (e) => {
         if (e.key === "Enter") finishEdit();
-        if (e.key === "Escape") {
-          // Cancel edit on Escape
-          reRenderList();
-        }
+        if (e.key === "Escape") reRenderList();
       });
       input.addEventListener("blur", finishEdit);
     });
 
-    // Delete button
     const deleteBtn = li.querySelector(".deleteBtn");
     deleteBtn.addEventListener("click", () => {
       if (deleteModalCheckbox) {
@@ -196,17 +173,13 @@ document.addEventListener("DOMContentLoaded", () => {
     bucketList.appendChild(li);
   }
 
-  // Clears and re-renders entire list
   function reRenderList() {
     bucketList.innerHTML = "";
     bucketItems.forEach((item, i) => renderItem(item, i));
-    
-    // Apply search filter after re-render
     const query = searchInput?.value?.toLowerCase().trim() || "";
     if (query) filterList(query);
   }
 
-  // Finish editing with duplicate prevention
   function finishEditing(input, index) {
     const newText = input.value.trim();
     if (newText === "") {
@@ -215,18 +188,15 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Prevent renaming into an existing task (case-insensitive), ignoring current item
     const exists = bucketItems.some(
       (item, i) => i !== index && item.text.toLowerCase() === newText.toLowerCase()
     );
-    
     if (exists) {
       showAlert("Task already exists!", "error");
       reRenderList();
       return;
     }
 
-    // Check if text actually changed
     if (bucketItems[index].text === newText) {
       reRenderList();
       return;
@@ -238,30 +208,24 @@ document.addEventListener("DOMContentLoaded", () => {
     showAlert("Task updated successfully!", "success");
   }
 
-  // Delete confirmation modal handler
   if (confirmDeleteBtn) {
     confirmDeleteBtn.addEventListener("click", () => {
       if (itemToDeleteIndex !== null) {
         bucketItems.splice(itemToDeleteIndex, 1);
         saveToLocalStorage();
-        
         if (deleteModalCheckbox) deleteModalCheckbox.checked = false;
-        
         reRenderList();
         showAlert("Task deleted successfully!", "error");
-        
         itemToDeleteIndex = null;
         itemToDeleteLi = null;
       }
     });
   }
 
-  // --- Add new item ---
   if (bucketForm) {
     bucketForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const value = bucketInput.value.trim();
-      
       if (!value) {
         showAlert("Please enter a task!", "error");
         return;
@@ -270,7 +234,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const exists = bucketItems.some(
         (item) => item.text.toLowerCase() === value.toLowerCase()
       );
-      
       if (exists) {
         showAlert("Task already exists!", "error");
         bucketInput.value = "";
@@ -286,7 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Search functionality ---
   if (searchInput) {
     searchInput.addEventListener("input", () => {
       const query = searchInput.value.toLowerCase().trim();
@@ -315,7 +277,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Toggle: Show Hidden tasks ---
   if (toggleHidden) {
     toggleHidden.addEventListener("change", () => {
       reRenderList();
@@ -324,11 +285,47 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Initial render on page load
   reRenderList();
-  
-  // Show welcome message if no items exist
+
   if (bucketItems.length === 0) {
     showAlert("Welcome! Start adding your bucket list items.", "success");
   }
 });
+
+// ---- Offline/Online Toast Notification ----
+function showNetworkStatus(message, color = "bg-yellow-600") {
+  let toastContainer = document.getElementById("network-toast-container");
+  if (!toastContainer) {
+    toastContainer = document.createElement("div");
+    toastContainer.id = "network-toast-container";
+    toastContainer.className = "fixed top-4 right-4 z-50";
+    document.body.appendChild(toastContainer);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `${color} text-white px-4 py-2 mb-2 rounded shadow-lg`;
+  toast.textContent = message;
+
+  toastContainer.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
+
+window.addEventListener("offline", () => {
+  showNetworkStatus("⚠️ You're offline. Some features may not work.", "bg-red-600");
+});
+
+window.addEventListener("online", () => {
+  showNetworkStatus("✅ Back online!", "bg-green-600");
+});
+
+// --- Register Service Worker ---
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/public/service-worker.js')
+      .then((reg) => console.log('✅ Service Worker registered:', reg.scope))
+      .catch((err) => console.warn('❌ Service Worker registration failed:', err));
+  });
+}

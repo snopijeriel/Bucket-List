@@ -5,8 +5,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bucket List App</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/public/manifest.json">
+
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#1D3557">
+
+  <!-- iOS Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Anidasoɔ">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/public/icons/icon-192x192.png">
+
+  <!-- Tailwind & DaisyUI -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.0.0/dist/full.css" rel="stylesheet" type="text/css" />
+
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -22,10 +37,7 @@
   <!-- Hero Section -->
   <section class="relative hero min-h-[70vh] md:min-h-[80vh] bg-cover bg-center mt-14"
     style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');">
-    <!-- Overlay -->
     <div class="absolute inset-0 bg-black bg-opacity-60"></div>
-
-    <!-- Hero Content -->
     <div class="hero-content text-center relative z-10 text-white px-4">
       <div class="max-w-xl">
         <h1 class="text-3xl md:text-5xl font-bold">🌍 Adventure Awaits!</h1>
@@ -45,8 +57,7 @@
     <div class="container mx-auto px-4 flex justify-center">
       <div class="form-control w-full max-w-2xl relative">
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-        <input id="searchInput" type="text" placeholder="Search your lists..."
-          class="input input-bordered w-full pl-10" />
+        <input id="searchInput" type="text" placeholder="Search your lists..." class="input input-bordered w-full pl-10" />
       </div>
     </div>
   </section>
@@ -69,12 +80,10 @@
       class="hidden mb-4 p-4 rounded-lg bg-green-100 text-green-700 font-medium transition duration-500 ease-in-out">
     </div>
 
-
     <!-- Bucket List Items -->
     <div class="card bg-white shadow-lg p-6 rounded-lg">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg font-bold">My Bucket List</h2>
-        <!-- Private Toggle -->
         <label class="flex items-center gap-2 cursor-pointer">
           <span class="text-sm">Show Hidden</span>
           <input id="toggleHidden" type="checkbox" class="toggle toggle-primary" />
@@ -100,7 +109,6 @@
       </div>
     </div>
   </div>
-
 
 </body>
 

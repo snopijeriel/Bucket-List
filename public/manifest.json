@@ -1,0 +1,22 @@
+{
+  "name": "Bucket List App",
+  "short_name": "Anidasoɔ",
+  "description": "A simple and fun bucket list app to plan, track and achieve your dreams.",
+  "start_url": "/frontend/index.html",
+  "display": "standalone",
+  "background_color": "#F1FAEE",
+  "theme_color": "#1D3557",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/public/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/public/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
