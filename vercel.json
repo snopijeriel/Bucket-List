@@ -1,8 +1,27 @@
 {
+  "version": 2,
   "builds": [
-    { "src": "frontend/index.html", "use": "@vercel/static" }
+    {
+      "src": "frontend/index.html",
+      "use": "@vercel/static"
+    }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "frontend/$1" }
+    {
+      "src": "/service-worker.js",
+      "dest": "public/service-worker.js"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "public/manifest.json"
+    },
+    {
+      "src": "/icons/(.*)",
+      "dest": "public/icons/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/$1"
+    }
   ]
 }
