@@ -1,100 +1,90 @@
-// public/service-worker.js
-const CACHE_NAME = 'bucket-list-cache-v1';
-
-const ASSETS = [
-  // App shell (local files)
-  '/frontend/index.html',
-  '/frontend/script.js',
-  '/frontend/style.css',              // if you have it; safe to include even if missing
-  '/public/manifest.json',
-  '/public/icons/icon-192x192.png',
-  '/public/icons/icon-512x512.png',
-
-  // CDN assets (so design works offline)
+const CACHE_NAME = 'bucket-list-v1';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/script.js',
+  '/manifest.json',
+  '/icons/icon-192x192.png',
+  '/icons/icon-512x512.png',
+  // Cache external resources
   'https://cdn.tailwindcss.com',
   'https://cdn.jsdelivr.net/npm/daisyui@4.0.0/dist/full.css',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2',
+  'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80'
 ];
 
-// Utility: attempt to cache each URL (tolerant to failures)
-async function cacheAssets(cache, urls) {
-  return Promise.all(urls.map(async (url) => {
-    try {
-      // Use mode:'no-cors' for some CDN hosts to avoid CORS blocking in caching.
-      const response = await fetch(url, { mode: 'no-cors' });
-      // If fetch succeeded, put a clone into cache.
-      await cache.put(url, response.clone());
-    } catch (err) {
-      // We'll warn but do not fail install because some CDNs may behave differently.
-      console.warn('[SW] Failed to cache', url, err);
-    }
-  }));
-}
-
+// Install event - cache resources
 self.addEventListener('install', (event) => {
-  console.log('[SW] Install event');
+  console.log('✅ Service Worker: Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(async (cache) => {
-        // Try a tolerant caching routine so install won't fail if some assets can't be fetched.
-        await cacheAssets(cache, ASSETS);
+      .then((cache) => {
+        console.log('📦 Service Worker: Caching files');
+        return cache.addAll(urlsToCache);
       })
-      .then(() => self.skipWaiting())
+      .then(() => {
+        console.log('✅ Service Worker: Installation complete');
+        return self.skipWaiting();
+      })
+      .catch((err) => {
+        console.error('❌ Service Worker: Cache error:', err);
+      })
   );
 });
 
+// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activate event');
+  console.log('🔄 Service Worker: Activating...');
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
-            console.log('[SW] Removing old cache:', key);
-            return caches.delete(key);
-          }
-        })
-      ))
-      .then(() => self.clients.claim())
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cache) => {
+            if (cache !== CACHE_NAME) {
+              console.log('🗑️ Service Worker: Clearing old cache:', cache);
+              return caches.delete(cache);
+            }
+          })
+        );
+      })
+      .then(() => {
+        console.log('✅ Service Worker: Activated');
+        return self.clients.claim();
+      })
   );
 });
 
+// Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
-  // Navigation request (HTML pages) -> Network-first (try online, fallback to cache)
-  if (event.request.mode === 'navigate' ||
-      (event.request.method === 'GET' && event.request.headers.get('accept')?.includes('text/html'))) {
-    event.respondWith(
-      fetch(event.request)
-        .then(networkResponse => {
-          // Update cache with latest HTML
-          caches.open(CACHE_NAME).then(cache => {
-            try { cache.put(event.request, networkResponse.clone()); } catch(e) { /* ignore */ }
-          });
-          return networkResponse;
-        })
-        .catch(() => {
-          return caches.match('/frontend/index.html');
-        })
-    );
-    return;
-  }
-
-  // For other requests (CSS/JS/images/CDNs) -> Cache-first, then network and update cache
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request)
-        .then(networkResponse => {
-          // Cache successful network responses for future
-          return caches.open(CACHE_NAME).then(cache => {
-            try { cache.put(event.request, networkResponse.clone()); } catch(e) { /* ignore */ }
-            return networkResponse;
+    caches.match(event.request)
+      .then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+
+        // Clone the request
+        return fetch(event.request.clone())
+          .then((response) => {
+            // Check if valid response
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // Clone and cache the response
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          })
+          .catch((error) => {
+            console.log('⚠️ Service Worker: Fetch failed, serving from cache', error);
+            return caches.match(event.request);
           });
-        })
-        .catch(() => {
-          // Optionally provide fallback for images or fonts here (not required)
-          return caches.match('/public/icons/icon-192x192.png'); // fallback icon if something fails
-        });
-    })
+      })
   );
 });

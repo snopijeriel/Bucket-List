@@ -321,11 +321,4 @@ window.addEventListener("online", () => {
   showNetworkStatus("✅ Back online!", "bg-green-600");
 });
 
-// --- Register Service Worker ---
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/public/service-worker.js')
-      .then((reg) => console.log('✅ Service Worker registered:', reg.scope))
-      .catch((err) => console.warn('❌ Service Worker registration failed:', err));
-  });
-}
+

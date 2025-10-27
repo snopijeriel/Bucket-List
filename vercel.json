@@ -1,27 +1,41 @@
 {
-  "version": 2,
-  "builds": [
+  "buildCommand": null,
+  "outputDirectory": "frontend",
+  "rewrites": [
     {
-      "src": "frontend/index.html",
-      "use": "@vercel/static"
+      "source": "/",
+      "destination": "/frontend/index.html"
+    },
+    {
+      "source": "/script.js",
+      "destination": "/frontend/script.js"
+    },
+    {
+      "source": "/manifest.json",
+      "destination": "/public/manifest.json"
+    },
+    {
+      "source": "/service-worker.js",
+      "destination": "/public/service-worker.js"
+    },
+    {
+      "source": "/icons/(.*)",
+      "destination": "/public/icons/$1"
     }
   ],
-  "routes": [
+  "headers": [
     {
-      "src": "/service-worker.js",
-      "dest": "public/service-worker.js"
-    },
-    {
-      "src": "/manifest.json",
-      "dest": "public/manifest.json"
-    },
-    {
-      "src": "/icons/(.*)",
-      "dest": "public/icons/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/$1"
+      "source": "/service-worker.js",
+      "headers": [
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
     }
   ]
 }
