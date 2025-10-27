@@ -7,7 +7,7 @@
   <title>Bucket List App</title>
 
   <!-- PWA Manifest -->
-  <link rel="manifest" href="/public/manifest.json">
+  <link rel="manifest" href="/manifest.json">
 
   <!-- Theme Color -->
   <meta name="theme-color" content="#1D3557">
@@ -16,7 +16,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Anidasoɔ">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="/public/icons/icon-192x192.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
 
   <!-- Tailwind & DaisyUI -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -29,7 +29,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/public/service-worker.js')
+        navigator.serviceWorker.register('/service-worker.js')
           .then(reg => console.log('Service Worker registered:', reg))
           .catch(err => console.error('Service Worker registration failed:', err));
       });
@@ -107,7 +107,7 @@
     </div>
 
   </main>
-  <script src="/frontend/script.js"></script>
+  <script src="script.js"></script>
 
   <!-- Delete Confirmation Modal -->
   <input type="checkbox" id="deleteModal" class="modal-toggle" />
